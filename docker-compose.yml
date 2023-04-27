@@ -1,25 +1,54 @@
 version: '3'
 
 services:
-
-  mariadb:
-    image: docker.io/bitnami/mariadb:10.6
-    environment:
-      # ALLOW_EMPTY_PASSWORD is recommended only for development.
-      - ALLOW_EMPTY_PASSWORD=yes
-      - MARIADB_USER=bn_myapp
-      - MARIADB_DATABASE=bitnami_myapp
+  php-fpm:
+    image: wsu-base-container
+    container_name: php-fpm
+    ports:
+      - '9000:9000'
+    volumes:
+      - ./base-site/:/var/www/html/
+      - ./php-fpm/:/opt/php-fpm/
+    entrypoint: ["/opt/launch.sh", "php-fpm"]
+    networks:
+      - app-network
 
   website:
-    image: docker.io/bitnami/laravel:10
+    image: wsu-base-container
+    container_name: website
     ports:
-      - '8000:8000'
-    environment:
-      - DB_HOST=mariadb
-      - DB_PORT=3306
-      - DB_USERNAME=bn_myapp
-      - DB_DATABASE=bitnami_myapp
+      - '3000:3000'
     volumes:
-      - './base-site:/app'
-    depends_on:
-      - mariadb
+      - ./base-site:/var/www/html
+    networks:
+      - app-network
+
+  nginx:
+    image: ubuntu/nginx
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT:-8000}:80
+    volumes:
+      - ./base-site:/var/www/html/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  redis:
+    image: redis:4.0
+    container_name: redis
+    ports:
+      - '6379:6379'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+# Not used yet because we don't have a database in place (yet)
+volumes:
+  dbData:
+    driver: local
