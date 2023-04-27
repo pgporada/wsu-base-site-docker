@@ -3,7 +3,7 @@ version: '3'
 services:
   php-fpm:
     image: wsu-base-container
-    container_name: php-fpm
+    container_name: wsu-php-fpm
     ports:
       - '9000:9000'
     volumes:
@@ -15,7 +15,7 @@ services:
 
   website:
     image: wsu-base-container
-    container_name: website
+    container_name: wsu-website
     ports:
       - '3000:3000'
     volumes:
@@ -25,7 +25,7 @@ services:
 
   nginx:
     image: ubuntu/nginx
-    container_name: nginx
+    container_name: wsu-nginx
     restart: unless-stopped
     ports:
       - ${APP_PORT:-8000}:80
@@ -38,7 +38,7 @@ services:
 
   redis:
     image: redis:4.0
-    container_name: redis
+    container_name: wsu-redis
     ports:
       - '6379:6379'
     networks:

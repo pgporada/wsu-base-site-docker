@@ -1,6 +1,8 @@
 # Overview
 
-![base working in containers](./imgs/overview.png)
+![base working in containers](./imgs/base1.png)
+![starting containers](./imgs/docker1.png)
+![frontend magic stuff](./imgs/docker2.png)
 
 # How to use this stuff
 Pull down the Wayne State University `base-site` repository inside of _this_ repository i.e.
