@@ -12,7 +12,7 @@ cd wsu-base-site-docker
 git clone https://github.com/waynestate/base-site
 ```
 
-Build the containers you need to do the job.
+Build the containers you need to do the job. The first time you run the build, PHP and PHP-FPM will be compiled based on the version of PHP stored in `./base-site/.phpbrewrc` which can take upwards of 20 minutes. Subsequent runs of build will take seconds because of how container layer caching works.
 ```
 ./build.sh
 ```
