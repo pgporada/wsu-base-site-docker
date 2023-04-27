@@ -38,7 +38,11 @@ To access a container, keep in mine that ports are mapped `LOCAL:REMOTE` meaning
 
 # Additional reading
 https://gist.github.com/soifou/404b4403b370b6203e6d145ba9846fcc
+
 https://github.com/nickdenardis/docker-php
+
 https://blog.joshwalsh.me/docker-nginx-php-fpm/
+
 https://aschmelyun.com/blog/fixing-permissions-issues-with-docker-compose-and-php/
+
 https://www.digitalocean.com/community/tutorials/how-to-set-up-laravel-nginx-and-mysql-with-docker-compose-on-ubuntu-20-04
