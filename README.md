@@ -12,11 +12,6 @@ cd wsu-base-site-docker
 git clone https://github.com/waynestate/base-site
 ```
 
-Build the containers you need to do the job. The first time you run the build, PHP and PHP-FPM will be compiled based on the version of PHP stored in `./base-site/.phpbrewrc` which can take upwards of 20 minutes. Subsequent runs of build will take seconds because of how container layer caching works.
-```
-./build.sh
-```
-
 Run the containers or shut them down
 ```
 docker compose up
@@ -37,6 +32,11 @@ docker images
 
 To access a container, keep in mine that ports are mapped `LOCAL:REMOTE` meaning that `0.0.0.0:32678:3000` means you can access `localhost:32678` in a web browser and traffic destined for there will be sent to port 3000/tcp inside the container.
 
+# Building a new container
+The first time you run the build, PHP and PHP-FPM will be compiled based on the version of PHP stored in `./base-site/.phpbrewrc` which can take upwards of 20 minutes on a `11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz`. Subsequent runs of build will take seconds because of how container layer caching works.
+```
+./build.sh
+```
 
 # Additional reading
 https://gist.github.com/soifou/404b4403b370b6203e6d145ba9846fcc

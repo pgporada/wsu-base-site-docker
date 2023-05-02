@@ -2,7 +2,7 @@ version: '3'
 
 services:
   php-fpm:
-    image: wsu-base-container
+    image: pgporada/php:8.0.13
     container_name: wsu-php-fpm
     ports:
       - '9000:9000'
@@ -14,7 +14,7 @@ services:
       - app-network
 
   website:
-    image: wsu-base-container
+    image: pgporada/php:8.0.13
     container_name: wsu-website
     ports:
       - '3000:3000'
