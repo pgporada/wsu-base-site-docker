@@ -10,6 +10,8 @@ Pull down the Wayne State University `base-site` repository inside of _this_ rep
 git clone https://github.com/pgporada/wsu-base-site-docker
 cd wsu-base-site-docker
 git clone https://github.com/waynestate/base-site
+cp base-site/.env.example base-site/.env
+sed -i.bak -E 's/^REDIS_HOST=localhost$/REDIS_HOST=wsu-redis/' base-site/.env
 ```
 
 Run the containers or shut them down
