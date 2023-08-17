@@ -59,10 +59,20 @@ RUN curl -L -O https://github.com/phpbrew/phpbrew/releases/latest/download/phpbr
 COPY ./base-site/.phpbrewrc /var/www/html/.phpbrewrc
 
 # Install php based on the .phpbrewrc
+# https://github.com/phpbrew/phpbrew#known-issues
 RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
     && mkdir -p /opt/phpbrew \
     && phpbrew init --root=/opt/phpbrew \
-    && phpbrew install ${PHPVERSION} +default +pdo +mysql +fpm \
+    && phpbrew install ${PHPVERSION} \
+        +default \
+        +pdo \
+        +mysql \
+        +fpm \
+        -- \
+        --with-gd=shared \
+        --enable-gd-natf \
+        --with-jpeg-dir=/usr \
+        --with-png-dir=/usr \
     && chown -R bitnami:bitnami /opt/phpbrew
 
 # Use a real shell that has features like 'source' because it's 2023 and not 1970
@@ -71,10 +81,11 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Load custom php.ini's
 COPY ./php /tmp/php/
 
-RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
+RUN export PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
+    && echo ${PHPVERSION} \
     && chown -R bitnami:bitnami /tmp/php/ \
-    && mv /tmp/php/fpm/php.ini /opt/phpbrew/php/php-${PHPVERSION}/etc/fpm/php.ini \
-    && mv /tmp/php/cli/php.ini /opt/phpbrew/php/php-${PHPVERSION}/etc/cli/php.ini
+    && cp /tmp/php/fpm/php.ini /opt/phpbrew/php/php-${PHPVERSION}/etc/fpm/php.ini \
+    && cp /tmp/php/cli/php.ini /opt/phpbrew/php/php-${PHPVERSION}/etc/cli/php.ini
 
 # Back to the bitnami user
 USER 1000
@@ -95,9 +106,11 @@ RUN wget https://raw.githubusercontent.com/phpbrew/phpbrew/master/shell/bashrc -
 RUN source ${HOME}/.phpbrew/bashrc \
     && phpbrew use $(awk '{print $3}' /var/www/html/.phpbrewrc) \
     && phpbrew ext install gd \
-    && phpbrew ext enable gd
+    && phpbrew ext enable gd \
+    && phpbrew ext install redis \
+    && phpbrew ext enable redis
 
-COPY ./launch.sh /opt/
+COPY ./docker-scripts/launch.sh /opt/
 
 # Change directories inside the container so that we're "in" the application's folder
 WORKDIR /var/www/html
