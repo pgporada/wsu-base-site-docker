@@ -38,6 +38,9 @@ To access a container, keep in mine that ports are mapped `LOCAL:REMOTE` meaning
 The first time you run the build, PHP and PHP-FPM will be compiled based on the version of PHP stored in `./base-site/.phpbrewrc` which can take upwards of 20 minutes on a `11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz`. Subsequent runs of build will take seconds because of how container layer caching works.
 ```
 ./build.sh
+
+docker tag wsu-base-container pgporada/php:8.0.13
+docker push pgporada/php:8.0.13
 ```
 
 # Additional reading
