@@ -78,14 +78,12 @@ RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
 # Use a real shell that has features like 'source' because it's 2023 and not 1970
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-# Load custom php.ini's
-COPY ./php /tmp/php/
+# Load custom php.ini files
+COPY ./php-configs /tmp/php-configs/
 
 RUN export PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
     && echo ${PHPVERSION} \
-    && chown -R bitnami:bitnami /tmp/php/ \
-    && cp /tmp/php/fpm/php.ini /opt/phpbrew/php/php-${PHPVERSION}/etc/fpm/php.ini \
-    && cp /tmp/php/cli/php.ini /opt/phpbrew/php/php-${PHPVERSION}/etc/cli/php.ini
+    && chown -R bitnami:bitnami /tmp/php-configs/
 
 # Back to the bitnami user
 USER 1000
@@ -95,10 +93,14 @@ RUN wget https://raw.githubusercontent.com/phpbrew/phpbrew/master/shell/bashrc -
     && sudo mkdir -p /root/.phpbrew \
     && sudo cp /tmp/bashrc /root/.phpbrew/ \
     && echo 'source /root/.phpbrew/bashrc' | sudo tee -a /root/.bashrc \
-    && mkdir -p ${HOME}/.phpbrew \
-    && cp /tmp/bashrc ${HOME}/.phpbrew/ \
-    && echo 'source ${HOME}/.phpbrew/bashrc' >> ${HOME}/.bashrc \
-    && chown -R 1000:1000 ${HOME}/.phpbrew
+    && mkdir -p ~/.phpbrew \
+    && cp /tmp/bashrc ~/.phpbrew/ \
+    && echo 'source ~/.phpbrew/bashrc' >> ~/.bashrc \
+    && chown -R 1000:1000 ${HOME}/.phpbrew \
+    && source ~/.phpbrew/bashrc \
+    && phpbrew use $(awk '{print $3}' /var/www/html/.phpbrewrc) \
+    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/${PHPBREW_PHP}/etc/fpm/php.ini \
+    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/${PHPBREW_PHP}/etc/cli/php.ini
 
 # Install php extensions specific to the required version of PHP.
 # Keep in mind these extensions may need to be enabled in the

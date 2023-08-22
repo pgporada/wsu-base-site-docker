@@ -1,1 +1,0 @@
-There are two different `php.ini` files that php may use depending on the circumstance in which php is called. Via FPM the php-sapi will be used and thus call the `fpm/php.ini` file. When called via the CLI such as `php do-whatever.php` the `cli/php.ini` will be used. Typically these are going to be identical files and I've symlinked them to enforce that for now.
