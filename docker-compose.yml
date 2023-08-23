@@ -38,14 +38,6 @@ services:
     networks:
       - app-network
 
-  redis:
-    image: redis:4.0
-    container_name: wsu-redis
-    ports:
-      - '6379:6379'
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
