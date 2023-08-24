@@ -25,7 +25,9 @@ services:
     networks:
       - app-network
 
-  nginx:
+  # Traefik will take this service name and dynamically add a route
+  # so that we can access the site.
+  base:
     image: ubuntu/nginx:latest
     container_name: wsu-nginx
     restart: unless-stopped
@@ -39,8 +41,8 @@ services:
       - app-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.wsu-base.rule=Host(`base.local`)"
-      - "traefik.http.services.wsu-base.loadbalancer.server.port=80"
+      #- "traefik.http.routers.wsu-base.rule=Host(`base.local`)"
+      #- "traefik.http.services.wsu-base.loadbalancer.server.port=80"
 
   redis:
     image: redis:4.0
@@ -55,9 +57,13 @@ services:
     container_name: wsu-router
     command:
       - "--api.insecure=true"
+      - "--entrypoints.web.address=:80"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+      - '--providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.compose.service" }}.local`)'
+    labels:
+      - 'traefik.http.services.traefik-traefik.loadBalancer.server.port=8080'
+      - 'traefik.enable=true'
     ports:
       - '80:80'     # Incoming to-be-routed HTTP requests
       - '8080:8080' # Web UI
