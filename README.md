@@ -61,9 +61,15 @@ $ sudo netstat -plunt | grep dnsmasq
 tcp        0      0 127.0.1.1:53            0.0.0.0:*               LISTEN      40977/dnsmasq
 udp        0      0 127.0.1.1:53            0.0.0.0:*                           40977/dnsmasq
 
+$ cat /etc/NetworkManager/dnsmasq.d/local.conf
+address=/local/127.0.0.1
+
 $ cat /etc/resolv.conf  | grep -v '^#'
 nameserver 127.0.1.1
 options edns0 trust-ad
+
+$ sudo systemctl restart NetworkManager
+$ systemctl status NetworkManager
 
 $ dig whatever.wayne.local +short
 127.0.0.1
