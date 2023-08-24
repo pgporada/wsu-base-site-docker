@@ -11,8 +11,6 @@ services:
       - ./base-site/:/var/www/html/
       - ./php-fpm/:/opt/php-fpm/
     entrypoint: ["/opt/launch.sh", "php-fpm"]
-    networks:
-      - app-network
 
   website:
     #image: pgporada/php:8.0.13
@@ -22,8 +20,6 @@ services:
       - '3000:3000'
     volumes:
       - ./base-site:/var/www/html
-    networks:
-      - app-network
 
   # Traefik will take this service name and dynamically add a route
   # so that we can access the site.
@@ -36,8 +32,6 @@ services:
       - ./base-site:/var/www/html/
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/vhosts/:/etc/nginx/sites-available/
-    networks:
-      - app-network
     labels:
       - "traefik.enable=true"
       #- "traefik.http.routers.wsu-base.rule=Host(`base.local`)"
@@ -48,8 +42,6 @@ services:
     container_name: wsu-redis
     ports:
       - '6379:6379'
-    networks:
-      - app-network
 
   traefik:
     image: traefik:2.10
@@ -68,12 +60,6 @@ services:
       - '8080:8080' # Web UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
 
 # Not used yet because we don't have a database in place (yet)
 volumes:
