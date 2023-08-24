@@ -59,8 +59,8 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
     ports:
-      - "80:80"
-      - "8080:8080"
+      - '80:80'     # Incoming to-be-routed HTTP requests
+      - '8080:8080' # Web UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
