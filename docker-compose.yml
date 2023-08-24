@@ -29,7 +29,6 @@ services:
   # so that we can access the site.
   base:
     image: ubuntu/nginx:latest
-    container_name: wsu-nginx
     restart: unless-stopped
     ports:
       - ${APP_PORT:-8000}:80
