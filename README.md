@@ -43,8 +43,34 @@ docker tag wsu-base-container pgporada/php:8.0.13
 docker push pgporada/php:8.0.13
 ```
 
-# Oddities and Considerations
+# DNS Setup and Considerations
 [Base](https://github.com/waynestate/base-site) has many references to `.wayne.local`. The `.local` suffix is specifically intended for mDNS per [RFC 6762](https://datatracker.ietf.org/doc/html/rfc6762#section-3) which means that base is _doing the wrong thing_, but it's been in use for so long that changing habits is more difficult than pushing a boulder up a mountain so what do we do? Well, if we were to change, the `.localhost` domain will **always** resolve to the loopback address (typically 127.0.0.1 or ::1) depending on IPv4/IPv6 per [RFC 6761](https://www.rfc-editor.org/rfc/rfc6761.html#section-6.3). Alternatively, a developer runs a local DNS server that will resolve `*.local` addresses. Examples of this in the past would be using `vagrant-dns` and `NetworkManager` which both use `dnsmasq` under the hood.
+
+## Ubuntu (Linux)
+
+Stop the avahi-daemon so that `systemd-resolved` will no longer respond to mDNS requests. This has the downside of you not being able to control a Chromecast or whatever from your computer. You'll be able to work on Wayne State websites so, so that's a cool trade-off I guess? This will also stop you from using systemd-resolved because as far as I can tell, it's not possible to make it work with systemd-resolved.
+```
+$ sudo systemctl stop avahi-daemon.socket
+$ sudo systemctl mask avahi-daemon.socket
+$ sudo systemctl stop avahi-daemon.service
+$ sudo systemctl mask avahi-daemon.service
+$ sudo systemctl stop systemd-resolved
+$ sudo systemctl mask systemd-resolved
+
+$ sudo netstat -plunt | grep dnsmasq
+tcp        0      0 127.0.1.1:53            0.0.0.0:*               LISTEN      40977/dnsmasq
+udp        0      0 127.0.1.1:53            0.0.0.0:*                           40977/dnsmasq
+
+$ cat /etc/resolv.conf  | grep -v '^#'
+nameserver 127.0.1.1
+options edns0 trust-ad
+
+$ dig whatever.wayne.local +short
+127.0.0.1
+
+$ dig base.local +short
+127.0.0.1
+```
 
 # Additional reading
 https://gist.github.com/soifou/404b4403b370b6203e6d145ba9846fcc
