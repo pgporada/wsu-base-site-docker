@@ -93,7 +93,7 @@ The gist of how Traefik is performing routing for this project is:
           [php-fpm] --->render the php and return it back up the stack to you, the client
 ```
 
-What this looks like in the `docker-compose.yml` file is the following. The service name is the 2nd level identation, in this case it would be `base` and `traefik`. It's important to note here that we're calling nginx "base" because nginx is also performing routing/reverse proxying over to the actual php content we care about. The routes are dynamically being added by traefik because of a `defaultRule` which uses some crazy complex Go templating exposed by Docker.
+What this looks like in the `docker-compose.yml` file is the following. The service name is the 2nd level indentation, in this case it would be `base` and `traefik`. It's important to note here that we're calling nginx "base" because nginx is also performing routing/reverse proxying over to the actual php content we care about. The routes are dynamically being added by traefik because of a `defaultRule` which uses some crazy complex Go templating exposed by Docker.
 ```
 service:
   base:
