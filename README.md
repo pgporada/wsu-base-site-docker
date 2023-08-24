@@ -88,7 +88,7 @@ The gist of how Traefik is performing routing for this project is:
 [you] ---start docker-compose--->
   [traefik] --->detect docker-compose service names and dynamically generate routes--->
     [you] ---web request on port 80 for base.local--->
-      [traefik] ---route your request to the container with servicc name "base" -->
+      [traefik] ---route your request to the container with service name "base" -->
         [nginx] --->reverse proxy over to php-fpm --->
           [php-fpm] --->render the php and return it back up the stack to you, the client
 ```
