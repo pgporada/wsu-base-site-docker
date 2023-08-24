@@ -43,6 +43,9 @@ docker tag wsu-base-container pgporada/php:8.0.13
 docker push pgporada/php:8.0.13
 ```
 
+# Oddities and Considerations
+[Base](https://github.com/waynestate/base-site) has many references to `.wayne.local`. The `.local` suffix is specifically intended for mDNS per [RFC 6762](https://datatracker.ietf.org/doc/html/rfc6762#section-3) which means that base is _doing the wrong thing_, but it's been in use for so long that changing habits is more difficult than pushing a boulder up a mountain so what do we do? Well, if we were to change, the `.localhost` domain will **always** resolve to the loopback address (typically 127.0.0.1 or ::1) depending on IPv4/IPv6 per [RFC 6761](https://www.rfc-editor.org/rfc/rfc6761.html#section-6.3). Alternatively, a developer runs a local DNS server that will resolve `*.local` addresses. Examples of this in the past would be using `vagrant-dns` and `NetworkManager` which both use `dnsmasq` under the hood.
+
 # Additional reading
 https://gist.github.com/soifou/404b4403b370b6203e6d145ba9846fcc
 
@@ -53,3 +56,5 @@ https://blog.joshwalsh.me/docker-nginx-php-fpm/
 https://aschmelyun.com/blog/fixing-permissions-issues-with-docker-compose-and-php/
 
 https://www.digitalocean.com/community/tutorials/how-to-set-up-laravel-nginx-and-mysql-with-docker-compose-on-ubuntu-20-04
+
+[Setting up Traefik with dnsmasq or NetworkManager](https://www.adaltas.com/en/2022/11/17/traefik-docker-dnsmasq/)
