@@ -51,9 +51,9 @@ RUN apt-get update && apt-get install -y -qq curl \
 # Install phpbrew so we can get whatever funky version of php we need
 # https://phpbrew.github.io/phpbrew/
 WORKDIR /tmp
-RUN curl -L -O https://github.com/phpbrew/phpbrew/releases/latest/download/phpbrew.phar \
-    && chmod +x phpbrew.phar \
-    && mv phpbrew.phar /usr/bin/phpbrew
+RUN curl -L -O https://github.com/phpbrew/phpbrew/raw/1.28.0/phpbrew \
+    && chmod +x phpbrew \
+    && mv phpbrew /usr/bin/phpbrew
 
 # Only copy in the phpbrewrc so that phpbrew doesn't reinstall php every time something in the app folder changes
 COPY ./base-site/.phpbrewrc /var/www/html/.phpbrewrc
