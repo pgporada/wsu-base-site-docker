@@ -51,7 +51,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - '--providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.compose.service" }}.local`)'
+      - '--providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.compose.service" }}.wayne.localhost`)'
     labels:
       - 'traefik.http.services.traefik-traefik.loadBalancer.server.port=8080'
       - 'traefik.enable=true'
