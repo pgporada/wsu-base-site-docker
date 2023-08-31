@@ -75,6 +75,12 @@ RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
         --with-png-dir=/usr \
     && chown -R bitnami:bitnami /opt/phpbrew
 
+# https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
+WORKDIR /tmp
+RUN curl -L -O https://getcomposer.org/download/2.5.8/composer.phar \
+    && chmod +x composer.phar \
+    && mv composer.phar /usr/bin/composer
+
 # Use a real shell that has features like 'source' because it's 2023 and not 1970
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
@@ -116,5 +122,8 @@ COPY ./docker-scripts/launch.sh /opt/
 
 # Change directories inside the container so that we're "in" the application's folder
 WORKDIR /var/www/html
+
+# Fix whatever bitnami did because we don't particularly care about anything they've got inside this container now.
+ENV PATH="/usr/bin:/bin:$PATH"
 
 CMD ["/opt/launch.sh"]
