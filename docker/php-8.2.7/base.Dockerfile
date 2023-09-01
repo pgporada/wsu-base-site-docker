@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y -qq curl \
     re2c \
     pkg-config \
     bzip2 \
+    sqlite3 \
+    libsqlite3-dev \
     libxml2-dev \
     libssl-dev \
     libbz2-dev \
