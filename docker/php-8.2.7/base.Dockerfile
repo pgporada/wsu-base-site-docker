@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y -qq curl wget make git
 # https://php.watch/articles/compile-php-ubuntu
 # https://github.com/phpbrew/phpbrew/wiki/Troubleshooting/#compiling-php74-with-the-openssl-extension-error-in-ubuntu-2204
 RUN apt-get update && apt-get install -y -qq curl \
+    wget \
+    make \
+    git \
     gcc \
     lbzip2 \
     m4 \
@@ -59,6 +62,17 @@ RUN apt-get update && apt-get install -y -qq curl \
     libssh2-1-dev \
     libsystemd-dev
 
+# Build custom freetype with freetype-config enabled for ease of use including freetype with GD on PHP 7+ versions that
+# don't use the --with-freetype flag when building
+# https://github.com/docker-library/php/issues/865#issuecomment-557360089
+WORKDIR /tmp
+RUN wget https://download.savannah.gnu.org/releases/freetype/freetype-2.8.1.tar.gz \
+    && tar xzvf freetype-2.8.1.tar.gz \
+    && cd freetype-2.8.1 \
+    && ./configure --prefix="/usr/include" \
+    && make \
+    && make install
+
 # Install phpbrew so we can get whatever funky version of php we need
 # https://phpbrew.github.io/phpbrew/
 WORKDIR /tmp
@@ -68,16 +82,6 @@ RUN curl -L -O https://github.com/phpbrew/phpbrew/raw/1.28.0/phpbrew \
 
 # Only copy in the phpbrewrc so that phpbrew doesn't reinstall php every time something in the app folder changes
 COPY ./base-site/.phpbrewrc /var/www/html/.phpbrewrc
-
-# Build custom freetype with freetype-config enabled for ease of use including freetype with GD on PHP 7+ versions that
-# don't use the --with-freetype flag when building
-# https://github.com/docker-library/php/issues/865#issuecomment-557360089
-RUN wget https://download.savannah.gnu.org/releases/freetype/freetype-2.8.1.tar.gz \
-    && tar xzvf freetype-2.8.1.tar.gz \
-    && cd ~/freetype-2.8.1 \
-    && ./configure --prefix="/usr/include" \
-    && make \
-    && make install
 
 # Install php based on the .phpbrewrc
 # https://github.com/phpbrew/phpbrew#known-issues

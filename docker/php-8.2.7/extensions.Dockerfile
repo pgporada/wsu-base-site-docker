@@ -14,10 +14,16 @@ USER 1000
 # appropriate php.ini file too.
 RUN source ${HOME}/.phpbrew/bashrc \
     && phpbrew use $(awk '{print $3}' /var/www/html/.phpbrewrc) \
-    && phpbrew ext install gd \
-    && phpbrew ext enable gd \
-    && phpbrew ext install redis \
-    && phpbrew ext enable redis
+    && phpbrew -d ext install ldap \
+    && phpbrew -d ext install xdebug \
+    && phpbrew -d ext install github:phpredis/phpredis 5.3.5 \
+    && phpbrew -d ext install iconv \
+    && phpbrew -d ext install mcrypt \
+    && phpbrew -d ext install opcache \
+    && phpbrew -d ext install exif \
+    && phpbrew -d ext install intl \
+    # Compile and Install GD library seperately for FreeType support
+    && phpbrew -d ext install gd -- --with-jpeg --with-png --with-zlib --with-freetype --with-gd=shared
 
 # Change directories inside the container so that we're "in" the application's folder
 WORKDIR /var/www/html
