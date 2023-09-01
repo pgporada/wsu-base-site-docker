@@ -1,4 +1,4 @@
-FROM wsu-php-8.2.7-base:latest
+FROM wsu-php-8.2.7-extensions:latest
 ENV DEBIAN_FRONTEND noninteractive
 ENV PHPBREW_SET_PROMPT 1
 ENV PHPBREW_RC_ENABLE 1
