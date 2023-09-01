@@ -1,4 +1,4 @@
-FROM wsu-php-8.2.7-base:latest
+FROM waynestate/php-base:8.2.7
 ENV DEBIAN_FRONTEND noninteractive
 ENV PHPBREW_SET_PROMPT 1
 ENV PHPBREW_RC_ENABLE 1
@@ -12,8 +12,7 @@ USER 1000
 # Install php extensions specific to the required version of PHP.
 # Keep in mind these extensions may need to be enabled in the
 # appropriate php.ini file too.
-RUN source ${HOME}/.phpbrew/bashrc \
-    && phpbrew use $(awk '{print $3}' /var/www/html/.phpbrewrc) \
+RUN source ~/.phpbrew/bashrc \
     && phpbrew -d ext install ldap \
     && phpbrew -d ext install xdebug \
     && phpbrew -d ext install github:phpredis/phpredis 5.3.5 \
@@ -24,6 +23,8 @@ RUN source ${HOME}/.phpbrew/bashrc \
     && phpbrew -d ext install intl \
     # Compile and Install GD library seperately for FreeType support
     && phpbrew -d ext install gd -- --with-jpeg --with-png --with-zlib --with-freetype --with-gd=shared
+
+COPY ./docker-scripts/launch.sh /opt/
 
 # Change directories inside the container so that we're "in" the application's folder
 WORKDIR /var/www/html

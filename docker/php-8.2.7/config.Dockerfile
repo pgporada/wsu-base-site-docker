@@ -1,4 +1,4 @@
-FROM wsu-php-8.2.7-extensions:latest
+FROM waynestate/php-extensions:8.2.7
 ENV DEBIAN_FRONTEND noninteractive
 ENV PHPBREW_SET_PROMPT 1
 ENV PHPBREW_RC_ENABLE 1
@@ -6,14 +6,18 @@ ENV PHPBREW_ROOT /opt/phpbrew
 
 VOLUME /opt/phpbrew
 
-USER root
+USER 1000
+
+WORKDIR /tmp
 
 # Load custom php.ini files
 COPY ./docker/php-8.2.7/php.ini /tmp/php-configs/php.ini
 
-RUN source ${HOME}/.phpbrew/bashrc \
-    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/${PHPBREW_PHP}/etc/fpm/php.ini \
-    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/${PHPBREW_PHP}/etc/cli/php.ini \
+RUN source ~/.phpbrew/bashrc \
+    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-8.2.7/etc/fpm/php.ini \
+    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-8.2.7/etc/cli/php.ini
+
+COPY ./docker-scripts/launch.sh /opt/
 
 # Change directories inside the container so that we're "in" the application's folder
 WORKDIR /var/www/html

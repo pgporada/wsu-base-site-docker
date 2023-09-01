@@ -115,8 +115,7 @@ RUN curl -L -O https://getcomposer.org/download/2.5.8/composer.phar \
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN export PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
-    && echo ${PHPVERSION} \
-    && chown -R bitnami:bitnami /tmp/php-configs/
+    && echo ${PHPVERSION}
 
 # Back to the bitnami user
 USER 1000

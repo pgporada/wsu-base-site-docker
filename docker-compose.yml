@@ -2,7 +2,7 @@ version: '3'
 
 services:
   php-fpm:
-    image: pgporada/php:8.2.7
+    image: waynestate/php-config:8.2.7
     #image: wsu-base-container:latest
     container_name: wsu-php-fpm
     ports:
@@ -13,7 +13,7 @@ services:
     entrypoint: ["/opt/launch.sh", "php-fpm"]
 
   website:
-    image: pgporada/php:8.2.7
+    image: waynestate/php-config:8.2.7
     #image: wsu-base-container:latest
     container_name: wsu-website
     ports:
