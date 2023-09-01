@@ -88,7 +88,7 @@ COPY ./base-site/.phpbrewrc /var/www/html/.phpbrewrc
 RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
     && mkdir -p /opt/phpbrew \
     && phpbrew init --root=/opt/phpbrew \
-    && phpbrew install 8.2.7 \
+    && phpbrew install ${PHPVERSION} \
         +default  \
         +sqlite  \
         +mysql  \
