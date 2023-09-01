@@ -4,7 +4,7 @@
 ![starting containers](./imgs/docker1.png)
 ![frontend magic stuff](./imgs/docker2.png)
 
-# How to use this stuff
+# Usage
 Pull down the Wayne State University `base-site` repository inside of _this_ repository i.e.
 ```
 git clone https://github.com/pgporada/wsu-base-site-docker
@@ -27,28 +27,13 @@ To view running container information:
 docker ps
 ```
 
-To see what containers are downloaded on your machine:
-```
-docker images
-```
-
 To access a container, keep in mine that ports are mapped `LOCAL:REMOTE` meaning that `0.0.0.0:32678:3000` means you can access `localhost:32678` in a web browser and traffic destined for there will be sent to port 3000/tcp inside the container.
-
-# Building a new container
-The first time you run the build, PHP and PHP-FPM will be compiled based on the version of PHP stored in `./base-site/.phpbrewrc` which can take upwards of 20 minutes on a `11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz`. Subsequent runs of build will take seconds because of how container layer caching works.
-```
-./build.sh
-
-docker tag wsu-base-container pgporada/php:8.0.13
-docker push pgporada/php:8.0.13
-```
-
-# DNS Setup and Considerations
-[Base](https://github.com/waynestate/base-site) previously had references to `.wayne.local`. The `.local` suffix is specifically intended for mDNS per [RFC 6762](https://datatracker.ietf.org/doc/html/rfc6762#section-3) which means that base was _doing the wrong thing_. Instead `.local` was changed to `.localhost` which **always** resolve to the loopback address (typically 127.0.0.1 or ::1) depending on IPv4/IPv6 per [RFC 6761](https://www.rfc-editor.org/rfc/rfc6761.html#section-6.3).
 
 
 # Understanding Routing and Accessing My Website
+
 ![traefik routing](./imgs/traefik-nginx.png)
+
 The gist of how Traefik is performing routing for this project is:
 ```
 [you] ---start docker-compose--->
@@ -87,6 +72,19 @@ If instead you want an artisanally crafted bespoke set of routing rules, we can 
 ```
 
 We're using Nginx to reverse proxy all traffic intended for `.php` files to a specific php-fpm container. Nginx needs to do this because it does not have a FastCGI handler built in, unlike Apache, which does.
+
+## Why domain.localhost?
+[Base](https://github.com/waynestate/base-site) has references to `.wayne.local`. The `.local` suffix is specifically intended for mDNS per [RFC 6762](https://datatracker.ietf.org/doc/html/rfc6762#section-3) which means that base is _doing the wrong thing (TM)_. Instead `.local` was changed to `.localhost` which **always** resolve to the loopback address (typically 127.0.0.1 or ::1) depending on IPv4/IPv6 per [RFC 6761](https://www.rfc-editor.org/rfc/rfc6761.html#section-6.3).
+
+
+# Building a new container
+The first time you run the build, PHP and PHP-FPM will be compiled based on the version of PHP stored in `./base-site/.phpbrewrc` which can take upwards of 20 minutes on a `11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz`. Subsequent runs of build will take seconds because of how container layer caching works.
+```
+./build.sh
+
+docker tag wsu-base-container pgporada/php:8.0.13
+docker push pgporada/php:8.0.13
+```
 
 # Additional reading
 1. https://gist.github.com/soifou/404b4403b370b6203e6d145ba9846fcc
