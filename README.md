@@ -32,7 +32,7 @@ To access a container, keep in mine that ports are mapped `LOCAL:REMOTE` meaning
 
 # Understanding Routing and Accessing My Website
 
-![traefik routing](./imgs/traefik-nginx.png)
+![traefik routing](./imgs/traefik-routing.png)
 
 The gist of how Traefik is performing routing for this project is:
 ```
