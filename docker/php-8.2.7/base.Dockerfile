@@ -1,4 +1,4 @@
-FROM wsu-php-8.2.7-base:latest
+FROM bitnami/laravel:6
 ENV DEBIAN_FRONTEND noninteractive
 ENV PHPBREW_SET_PROMPT 1
 ENV PHPBREW_RC_ENABLE 1
@@ -15,9 +15,6 @@ RUN apt-get update && apt-get install -y -qq curl wget make git
 # https://php.watch/articles/compile-php-ubuntu
 # https://github.com/phpbrew/phpbrew/wiki/Troubleshooting/#compiling-php74-with-the-openssl-extension-error-in-ubuntu-2204
 RUN apt-get update && apt-get install -y -qq curl \
-    wget \
-    make \
-    git \
     gcc \
     lbzip2 \
     m4 \
@@ -41,11 +38,25 @@ RUN apt-get update && apt-get install -y -qq curl \
     libxpm-dev \
     libpq-dev \
     libicu-dev \
+    libfreetype6 \
     libfreetype6-dev \
     libldap2-dev \
     libxslt-dev \
     libldb-dev \
     libzip-dev \
+    libsystemd-dev \
+    libbz2-dev \
+    libxml2-dev \
+    libwebp-dev \
+    liblzma-dev \
+    lzma-dev \
+    xz-utils \
+    libonig-dev \
+    libonig5 \
+    libidn11-dev \
+    libkrb5-dev \
+    librtmp-dev \
+    libssh2-1-dev \
     libsystemd-dev
 
 # Install phpbrew so we can get whatever funky version of php we need
@@ -58,6 +69,16 @@ RUN curl -L -O https://github.com/phpbrew/phpbrew/raw/1.28.0/phpbrew \
 # Only copy in the phpbrewrc so that phpbrew doesn't reinstall php every time something in the app folder changes
 COPY ./base-site/.phpbrewrc /var/www/html/.phpbrewrc
 
+# Build custom freetype with freetype-config enabled for ease of use including freetype with GD on PHP 7+ versions that
+# don't use the --with-freetype flag when building
+# https://github.com/docker-library/php/issues/865#issuecomment-557360089
+RUN wget https://download.savannah.gnu.org/releases/freetype/freetype-2.8.1.tar.gz \
+    && tar xzvf freetype-2.8.1.tar.gz \
+    && cd ~/freetype-2.8.1 \
+    && ./configure --prefix="/usr/include" \
+    && make \
+    && make install
+
 # Install php based on the .phpbrewrc
 # https://github.com/phpbrew/phpbrew#known-issues
 RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
@@ -65,9 +86,17 @@ RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
     && phpbrew init --root=/opt/phpbrew \
     && phpbrew install ${PHPVERSION} \
         +default \
-        +pdo \
+        +sqlite \
         +mysql \
         +fpm \
+        +mcrypt \
+        +openssl \
+        +session \
+        +soap \
+        +sockets \
+        +tokenizer \
+        +zip \
+        +zlib \
         -- \
         --with-gd=shared \
         --enable-gd-natf \
@@ -83,9 +112,6 @@ RUN curl -L -O https://getcomposer.org/download/2.5.8/composer.phar \
 
 # Use a real shell that has features like 'source' because it's 2023 and not 1970
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
-# Load custom php.ini files
-COPY ./php-configs /tmp/php-configs/
 
 RUN export PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
     && echo ${PHPVERSION} \
@@ -105,19 +131,8 @@ RUN wget https://raw.githubusercontent.com/phpbrew/phpbrew/master/shell/bashrc -
     && chown -R 1000:1000 ${HOME}/.phpbrew \
     && source ~/.phpbrew/bashrc \
     && phpbrew use $(awk '{print $3}' /var/www/html/.phpbrewrc) \
-    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/${PHPBREW_PHP}/etc/fpm/php.ini \
-    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/${PHPBREW_PHP}/etc/cli/php.ini
 
-# Install php extensions specific to the required version of PHP.
-# Keep in mind these extensions may need to be enabled in the
-# appropriate php.ini file too.
-RUN source ${HOME}/.phpbrew/bashrc \
-    && phpbrew use $(awk '{print $3}' /var/www/html/.phpbrewrc) \
-    && phpbrew ext install gd \
-    && phpbrew ext enable gd \
-    && phpbrew ext install redis \
-    && phpbrew ext enable redis
-
+    
 COPY ./docker-scripts/launch.sh /opt/
 
 # Change directories inside the container so that we're "in" the application's folder
