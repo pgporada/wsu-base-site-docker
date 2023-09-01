@@ -88,24 +88,19 @@ COPY ./base-site/.phpbrewrc /var/www/html/.phpbrewrc
 RUN PHPVERSION=$(awk '{print $3}' /var/www/html/.phpbrewrc) \
     && mkdir -p /opt/phpbrew \
     && phpbrew init --root=/opt/phpbrew \
-    && phpbrew install ${PHPVERSION} \
-        +default \
-        +sqlite \
-        +mysql \
-        +fpm \
-        +mcrypt \
-        +openssl \
-        +session \
-        +soap \
-        +sockets \
-        +tokenizer \
-        +zip \
+    && phpbrew install 8.2.7 \
+        +default  \
+        +sqlite  \
+        +mysql  \
+        +fpm  \
+        +mcrypt  \
+        +openssl  \
+        +session  \
+        +soap  \
+        +sockets  \
+        +tokenizer  \
+        +zip  \
         +zlib \
-        -- \
-        --with-gd=shared \
-        --enable-gd-natf \
-        --with-jpeg-dir=/usr \
-        --with-png-dir=/usr \
     && chown -R bitnami:bitnami /opt/phpbrew
 
 # https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
