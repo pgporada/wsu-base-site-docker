@@ -43,6 +43,13 @@ services:
     ports:
       - '6379:6379'
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: wsu-mailpit
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
   traefik:
     image: traefik:2.10
     container_name: wsu-router
