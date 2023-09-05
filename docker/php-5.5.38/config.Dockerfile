@@ -14,7 +14,7 @@ COPY ./docker/php-${PHPVERSION}/php.ini /tmp/php-configs/php.ini
 
 RUN source ~/.phpbrew/bashrc \
     && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-${PHPVERSION}/etc/php.ini \
-    && phpbrew -d clean php-5.5.38
+    && phpbrew -d clean php-${PHPVERSION}
 
 COPY ./docker/php-${PHPVERSION}/launch.sh /opt/
 

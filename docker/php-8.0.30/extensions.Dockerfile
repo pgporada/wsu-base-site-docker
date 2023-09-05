@@ -12,7 +12,7 @@ USER 1000
 # Keep in mind these extensions may need to be enabled in the
 # appropriate php.ini file too.
 RUN source ~/.phpbrew/bashrc \
-    && phpbrew -d switch 8.0.30 \
+    && phpbrew -d switch ${PHPVERSION} \
     && phpbrew -d ext install ldap \
     && phpbrew -d ext install xdebug \
     && phpbrew -d ext install github:phpredis/phpredis 5.3.5 \

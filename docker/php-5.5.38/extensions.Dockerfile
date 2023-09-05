@@ -12,7 +12,7 @@ USER 1000
 # Keep in mind these extensions may need to be enabled in the
 # appropriate php.ini file too.
 RUN source ~/.phpbrew/bashrc \
-    && phpbrew -d switch 5.5.38 \
+    && phpbrew -d switch ${PHPVERSION} \
     && phpbrew -d ext install openssl \
     && phpbrew -d ext install json \
     && phpbrew -d ext install ldap \

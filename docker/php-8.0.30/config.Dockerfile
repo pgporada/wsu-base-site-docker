@@ -15,7 +15,7 @@ COPY ./docker/php-${PHPVERSION}/php.ini /tmp/php-configs/php.ini
 RUN source ~/.phpbrew/bashrc \
     && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-${PHPVERSION}/etc/fpm/php.ini \
     && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-${PHPVERSION}//etc/cli/php.ini \
-    && phpbrew -d clean php-8.0.30
+    && phpbrew -d clean php-${PHPVERSION}
 
 COPY ./docker/php-${PHPVERSION}/launch.sh /opt/
 
