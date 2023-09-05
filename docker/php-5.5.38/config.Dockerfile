@@ -1,9 +1,9 @@
-FROM waynestate/php-extensions:8.2.7
+FROM waynestate/php-extensions:5.5.38
 ENV DEBIAN_FRONTEND noninteractive
 ENV PHPBREW_SET_PROMPT 1
 ENV PHPBREW_RC_ENABLE 1
 ENV PHPBREW_ROOT /opt/phpbrew
-ENV PHPVERSION 8.2.7
+ENV PHPVERSION 5.5.38
 
 USER 1000
 
@@ -13,9 +13,8 @@ WORKDIR /tmp
 COPY ./docker/php-${PHPVERSION}/php.ini /tmp/php-configs/php.ini
 
 RUN source ~/.phpbrew/bashrc \
-    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-${PHPVERSION}/etc/fpm/php.ini \
-    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-${PHPVERSION}/etc/cli/php.ini \
-    && phpbrew -d clean php-8.2.7
+    && sudo cp /tmp/php-configs/php.ini ${PHPBREW_ROOT}/php/php-${PHPVERSION}/etc/php.ini \
+    && phpbrew -d clean php-5.5.38
 
 COPY ./docker/php-${PHPVERSION}/launch.sh /opt/
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source ${HOME}/.phpbrew/bashrc
-phpbrew use $(awk '{print $3}' /var/www/html/.phpbrewrc)
+phpbrew use 8.0.30
 
 if [[ ${1} == "php-fpm" ]]; then
     #sudo php-fpm -F

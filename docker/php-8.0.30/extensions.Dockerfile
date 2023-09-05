@@ -1,9 +1,9 @@
-FROM waynestate/php-base:8.2.7
+FROM waynestate/php-base:8.0.30
 ENV DEBIAN_FRONTEND noninteractive
 ENV PHPBREW_SET_PROMPT 1
 ENV PHPBREW_RC_ENABLE 1
 ENV PHPBREW_ROOT /opt/phpbrew
-ENV PHPVERSION 8.2.7
+ENV PHPVERSION 8.0.30
 
 # Back to the bitnami user
 USER 1000
@@ -12,11 +12,11 @@ USER 1000
 # Keep in mind these extensions may need to be enabled in the
 # appropriate php.ini file too.
 RUN source ~/.phpbrew/bashrc \
+    && phpbrew -d switch 8.0.30 \
     && phpbrew -d ext install ldap \
     && phpbrew -d ext install xdebug \
     && phpbrew -d ext install github:phpredis/phpredis 5.3.5 \
     && phpbrew -d ext install iconv \
-    && phpbrew -d ext install mcrypt \
     && phpbrew -d ext install opcache \
     && phpbrew -d ext install exif \
     && phpbrew -d ext install intl \

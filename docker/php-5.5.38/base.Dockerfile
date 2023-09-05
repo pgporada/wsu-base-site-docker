@@ -3,7 +3,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV PHPBREW_SET_PROMPT 1
 ENV PHPBREW_RC_ENABLE 1
 ENV PHPBREW_ROOT /opt/phpbrew
-ENV PHPVERSION 8.2.7
+ENV PHPVERSION 5.5.38
 
 USER root
 
@@ -61,9 +61,30 @@ RUN apt-get update && apt-get install -y -qq curl \
     libkrb5-dev \
     librtmp-dev \
     libssh2-1-dev \
-    libsystemd-dev
+    libsystemd-dev \
+    && ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \
+    && ln -fs /usr/include/x86_64-linux-gnu/curl /usr/local/include/curl
 
-RUN composer self-update
+RUN composer self-update 2.2.21
+
+# Set up OpenSSL 1.0.2u and Curl built with it to allow proper SSL
+WORKDIR /tmp
+RUN wget https://www.openssl.org/source/openssl-1.0.2u.tar.gz \
+    && tar xzvf openssl-1.0.2u.tar.gz \
+    && cd openssl-1.0.2u \
+    && ./config -fPIC shared --prefix=/opt/openssl --openssldir=/usr/local/openssl \
+    && make \
+    && make install
+
+WORKDIR /tmp
+RUN wget https://github.com/curl/curl/releases/download/curl-7_70_0/curl-7.70.0.tar.gz \
+    && tar xzvf curl-7.70.0.tar.gz \
+    && cd curl-7.70.0 \
+    && LDFLAGS="-Wl,-rpath,/opt/openssl/lib" ./configure --with-ssl=/opt/openssl --prefix=/opt/openssl \
+    && make \
+    && make install
+
+COPY ./docker/php-${PHPVERSION}/openssl.cnf /opt/openssl/openssl.cnf
 
 # Build custom freetype with freetype-config enabled for ease of use including freetype with GD on PHP 7+ versions that
 # don't use the --with-freetype flag when building
@@ -79,28 +100,31 @@ RUN wget https://download.savannah.gnu.org/releases/freetype/freetype-2.8.1.tar.
 # Install phpbrew so we can get whatever funky version of php we need
 # https://phpbrew.github.io/phpbrew/
 WORKDIR /tmp
-RUN curl -L -O https://github.com/phpbrew/phpbrew/raw/1.28.0/phpbrew \
-    && chmod +x phpbrew \
-    && mv phpbrew /usr/bin/phpbrew
+RUN curl -L -O https://github.com/phpbrew/phpbrew/releases/download/1.27.0/phpbrew.phar \
+    && chmod +x phpbrew.phar \
+    && mv phpbrew.phar /usr/bin/phpbrew
 
 # Install php based on the .phpbrewrc
 # https://github.com/phpbrew/phpbrew#known-issues
 RUN mkdir -p /opt/phpbrew \
     && phpbrew init --root=/opt/phpbrew \
     && phpbrew -d update --old \
-    && phpbrew install ${PHPVERSION} \
+    && PKG_CONFIG_PATH=/opt/openssl/lib/pkgconfig phpbrew -d install ${PHPVERSION}  \
         +default  \
         +sqlite  \
         +mysql  \
         +fpm  \
         +mcrypt  \
-        +openssl  \
         +session  \
         +soap  \
         +sockets  \
         +tokenizer  \
         +zip  \
-        +zlib \
+        +zlib  \
+        +curl=/opt/openssl \
+        -json  \
+        --  \
+        --with-openssl=shared \
     && chown -R bitnami:bitnami /opt/phpbrew
 
 # Use a real shell that has features like 'source' because it's 2023 and not 1970
@@ -119,7 +143,7 @@ RUN wget https://raw.githubusercontent.com/phpbrew/phpbrew/1.28.0/shell/bashrc -
     && echo 'source ~/.phpbrew/bashrc' >> ~/.bashrc \
     && chown -R 1000:1000 ${HOME}/.phpbrew \
     && source ~/.phpbrew/bashrc \
-    && phpbrew -d switch ${PHPVERSION}
+    && phpbrew use ${PHPVERSION}
 
 COPY ./docker/php-${PHPVERSION}/launch.sh /opt/
 
