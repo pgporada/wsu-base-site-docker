@@ -22,9 +22,11 @@ function build() {
     local type="${1}"
     local version="${2}"
 
-    docker build --no-cache -f "./docker/php-${version}/${type}.Dockerfile" -t "wsu-php-${version}-${type}" .
-    docker tag "wsu-php-${version}-${type}" "waynestate/php-${type}:${version}"
-    docker push "waynestate/php-${type}:${version}"
+    docker buildx build -f "./docker/php-${version}/${type}.Dockerfile" \
+        --platform "linux/amd64,linux/arm64" \
+        --push \
+        --tag "waynestate/php-${type}:${version}" \
+        .
 }
 
 if [[ "${argType}" == "all" && "${argPHPVersion}" == "all" ]]; then
