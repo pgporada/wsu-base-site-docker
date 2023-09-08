@@ -77,8 +77,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik-tls.yml:/etc/certs/traefik-tls.yml
-      - ./.certs/minica.pem:/etc/certs/minica.pem # server cert
-      - ./.certs/minica-key.pem:/etc/certs/minica-key.pem # server key
+      - ./.certs/_.wayne.localhost/:/etc/certs/
 
 # Not used yet because we don't have a database in place (yet)
 volumes:
