@@ -28,14 +28,17 @@ services:
     restart: unless-stopped
     ports:
       - ${APP_PORT:-8000}:80
+      - ${APP_PORT_TLS:-8001}:443
     volumes:
       - ./base-site:/var/www/html/
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/vhosts/:/etc/nginx/sites-available/
     labels:
       - "traefik.enable=true"
-      #- "traefik.http.routers.wsu-base.rule=Host(`base.local`)"
-      #- "traefik.http.services.wsu-base.loadbalancer.server.port=80"
+      - "traefik.port=80"
+      - "traefik.http.routers.base.rule=Host(`base.wayne.localhost`)"
+      - "traefik.http.routers.nginx.entrypoints=websecure"
+      - "traefik.http.routers.nginx.tls=true"
 
   redis:
     image: redis:4.0
@@ -56,17 +59,26 @@ services:
     command:
       - "--api.insecure=true"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - '--providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.compose.service" }}.wayne.localhost`)'
+      - "--providers.file.filename=/etc/certs/traefik-tls.yml"
     labels:
       - 'traefik.http.services.traefik-traefik.loadBalancer.server.port=8080'
       - 'traefik.enable=true'
     ports:
       - '80:80'     # Incoming to-be-routed HTTP requests
+      - '443:443'     # Incoming to-be-routed HTTP requests
       - '8080:8080' # Web UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik-tls.yml:/etc/certs/traefik-tls.yml
+      - ./.certs/minica.pem:/etc/certs/minica.pem # server cert
+      - ./.certs/minica-key.pem:/etc/certs/minica-key.pem # server key
 
 # Not used yet because we don't have a database in place (yet)
 volumes:

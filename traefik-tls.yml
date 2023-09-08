@@ -1,0 +1,10 @@
+#traefik-tls.yml stored in /etc/certs/
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/certs/minica.pem
+        keyFile: /etc/certs/minica-key.pem
+  certificates:
+    - certFile: /etc/certs/minica.pem
+      keyFile: /etc/certs/minica-key.pem

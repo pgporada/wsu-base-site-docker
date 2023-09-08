@@ -1,6 +1,6 @@
 server {
 	listen 80;
-	server_name _;
+	server_name _ default_server;
 	root /var/www/html/public;
 	index index.html index.htm index.php;
 
@@ -8,9 +8,6 @@ server {
 
 	location = /favicon.ico { access_log off; log_not_found off; }
     location = /robots.txt  { access_log off; log_not_found off; }
-
-    access_log off;
-    error_log  stderr error;
 
 	sendfile on;
 

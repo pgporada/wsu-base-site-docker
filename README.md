@@ -9,9 +9,17 @@ Pull down the Wayne State University `base-site` repository inside of _this_ rep
 ```
 git clone https://github.com/pgporada/wsu-base-site-docker
 cd wsu-base-site-docker
+
 git clone https://github.com/waynestate/base-site
 cp base-site/.env.example base-site/.env
 sed -i.bak -E 's/^REDIS_HOST=localhost$/REDIS_HOST=wsu-redis/' base-site/.env
+
+# Have a recent version of Golang to install minica which we'll use to generate a wildcard TLS certificate
+# On OSX you can probably just: `brew install go`
+go install github.com/jsha/minica@latest
+
+# This will output key material into ./.certs
+./gen-cert.sh
 ```
 
 Run the containers or shut them down
