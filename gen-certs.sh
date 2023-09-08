@@ -12,6 +12,6 @@ minica -domains '*.wayne.localhost'
 cd ..
 
 echo "+) Fixing permissions"
-sudo find .certs/ -type f -name '*.pem' -exec chown root:root {} \;
+sudo find .certs/*/ -type f -name '*.pem' -exec chown root:root {} \;
 
 echo '+) Done!'

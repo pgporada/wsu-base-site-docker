@@ -66,7 +66,7 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - '--providers.docker.defaultRule=Host(`{{ index .Labels "com.docker.compose.service" }}.wayne.localhost`)'
-      - "--providers.file.filename=/etc/certs/traefik-tls.yml"
+      - "--providers.file.filename=/etc/traefik/traefik-tls.yml"
     labels:
       - 'traefik.http.services.traefik-traefik.loadBalancer.server.port=8080'
       - 'traefik.enable=true'
@@ -76,7 +76,7 @@ services:
       - '8080:8080' # Web UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik-tls.yml:/etc/certs/traefik-tls.yml
+      - ./traefik-tls.yml:/etc/traefik/traefik-tls.yml
       - ./.certs/_.wayne.localhost/:/etc/certs/
 
 # Not used yet because we don't have a database in place (yet)
