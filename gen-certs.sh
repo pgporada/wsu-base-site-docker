@@ -12,6 +12,7 @@ minica -domains '*.wayne.localhost'
 cd ..
 
 echo "+) Fixing permissions"
-sudo find .certs/*/ -type f -name '*.pem' -exec chown root:root {} \;
+# OSX uses staff instead of root as the group. Let's find it regardless of system.
+sudo find .certs/*/ -type f -name '*.pem' -exec chown root:${GROUPS} {} \;
 
 echo '+) Done!'

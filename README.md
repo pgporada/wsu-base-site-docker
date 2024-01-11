@@ -14,12 +14,16 @@ git clone https://github.com/waynestate/base-site
 cp base-site/.env.example base-site/.env
 sed -i.bak -E 's/^REDIS_HOST=localhost$/REDIS_HOST=wsu-redis/' base-site/.env
 
-# Have a recent version of Golang to install minica which we'll use to generate a wildcard TLS certificate
+# Have a recent version of Golang to install minica which
+# we'll use to generate a wildcard TLS certificate.
 # On OSX you can probably just: `brew install go`
 go install github.com/jsha/minica@latest
 
-# This will output key material into ./.certs
-./gen-cert.sh
+# Adjust your PATH to find installed go programs.
+export PATH="${PATH}:${HOME}/go/bin"
+
+# This will output key material into `./.certs`. The key material allows you to access sites over HTTPS.
+./gen-certs.sh
 ```
 
 Run the containers or shut them down
