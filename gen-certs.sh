@@ -13,6 +13,6 @@ cd ..
 
 echo "+) Fixing permissions"
 # OSX uses staff instead of root as the group. Let's find it regardless of system.
-sudo find .certs/*/ -type f -name '*.pem' -exec chown root:${GROUPS} {} \;
+sudo find .certs/*/ -type f -name '*.pem' -exec chown ${UID}:${GROUPS} {} \;
 
 echo '+) Done!'
