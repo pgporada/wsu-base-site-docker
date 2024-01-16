@@ -26,6 +26,13 @@ export PATH="${PATH}:${HOME}/go/bin"
 ./gen-certs.sh
 ```
 
+Make sure the file exists (on host) and is populated with the following:
+```
+❯ cat /etc/resolver/local
+nameserver 127.0.0.1
+port 5300%
+```
+
 Run the containers or shut them down
 ```
 docker compose up
