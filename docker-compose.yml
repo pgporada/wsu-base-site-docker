@@ -8,7 +8,8 @@ services:
     ports:
       - '9000:9000'
     volumes:
-      - ./base-site/:/var/www/html/
+      - ./base-site/:/var/www/html/:ro
+      - ./base-site/storage:/var/www/html/storage # Laravel cache
       - ./php-fpm/:/opt/php-fpm/
     entrypoint: ["/opt/launch.sh", "php-fpm"]
 
@@ -30,7 +31,7 @@ services:
       - ${APP_PORT:-8000}:80
       - ${APP_PORT_TLS:-8001}:443
     volumes:
-      - ./base-site:/var/www/html/
+      - ./base-site:/var/www/html/:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/vhosts/:/etc/nginx/sites-available/
     labels:
@@ -76,8 +77,8 @@ services:
       - '8080:8080' # Web UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik-tls.yml:/etc/traefik/traefik-tls.yml
-      - ./.certs/_.wayne.localhost/:/etc/certs/
+      - ./traefik-tls.yml:/etc/traefik/traefik-tls.yml,
+      - ./.certs/_.wayne.localhost/:/etc/certs/:ro
 
 # Not used yet because we don't have a database in place (yet)
 volumes:
